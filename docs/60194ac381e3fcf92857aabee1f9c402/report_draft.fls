@@ -1,0 +1,7 @@
+PWD /home/dhfromkorea/Dropbox/master_personal/code_dh/scripts/machine-learning/ml-no-rl/red-hen-lab/digital-silo/docs
+INPUT /etc/texmf/web2c/texmf.cnf
+INPUT /usr/share/texmf/web2c/texmf.cnf
+INPUT /usr/share/texlive/texmf-dist/web2c/texmf.cnf
+INPUT /var/lib/texmf/web2c/pdftex/pdflatex.fmt
+INPUT report_draft.tex
+OUTPUT /home/dhfromkorea/Dropbox/master_personal/code_dh/scripts/machine-learning/ml-no-rl/red-hen-lab/digital-silo/docs/60194ac381e3fcf92857aabee1f9c402/report_draft.log
