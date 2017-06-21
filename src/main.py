@@ -15,6 +15,10 @@ shot < scene < segment (story, commercial) <(cutpoint) program
 import pandas as pd
 import numpy as np
 import re
+
+from models.text import keyword_search as ks
+
+
 CAPTION_FILE_PATH = '../data/2006/2006-06/2006-06-13/example.txt3'
 CUT_FILE_PATH = '../data/2006/2006-06/2006-06-13/example.cuts'
 
@@ -62,7 +66,7 @@ def cc_keyword(df, *args):
     pattern = r'|'.join(args)
     return df['caption'].str.contains(pattern, flags=re.IGNORECASE)
 
-def evaluate(y, pred):
+def evaluate_model(y, pred):
     '''[summary]
     
     decision time window (grace period) of 3 seconds before and after the predicted timestamp
@@ -74,19 +78,18 @@ def evaluate(y, pred):
     Returns:
         accuracy:
     '''
-    GRACE_PERIOD = 1005 # seconds
+    GRACE_PERIOD = 5 # seconds
 
     pred = pred['mid'].values
     y = y['cutpoint'].values
 
-    print('predicted cutpoints dim {}'.format(pred.shape))
-    print(pred)
-    print('labelled cutpoints dim {}'.format(y.shape))
-    print(y)
+    # print('predicted cutpoints dim {}'.format(pred.shape))
+    # print(pred)
+    # print('labelled cutpoints dim {}'.format(y.shape))
+    # print(y)
 
     delta = np.timedelta64(GRACE_PERIOD, 's')
     is_close = np.abs(y - pred[:,np.newaxis]) <= delta
-    print(is_close)
     print(np.any(is_close, axis=1))
     
     # print(pred + delta)
@@ -95,25 +98,26 @@ def evaluate(y, pred):
     pass
 
 def main():
-    df, is_end, filename = load_caption_data(CAPTION_FILE_PATH)
-    df2 = load_cut_files(CUT_FILE_PATH)
+    df, _, _ = load_caption_data(CAPTION_FILE_PATH)
+    y = load_cut_files(CUT_FILE_PATH)
 
     # print(df.head())
     # print("SLDKJFLKSJFD LJ LKSDJFLSDJLFKJSDLFJSLKJL")
     # print(df2['cutpoint'].head())
     
-    is_segment = df['marker'].str.contains('seg', case=False)
-    is_story = df['caption'].str.contains('story', case=False)
-    is_commercial = df['caption'].str.contains('commercial', case=False)
-    story_boundaries = df.loc[is_segment & is_story]
-    commercial_boundaries = df.loc[is_segment & is_commercial]
+    # is_segment = df['marker'].str.contains('seg', case=False)
+    # is_story = df['caption'].str.contains('story', case=False)
+    # is_commercial = df['caption'].str.contains('commercial', case=False)
+    # story_boundaries = df.loc[is_segment & is_story]
+    # commercial_boundaries = df.loc[is_segment & is_commercial]
 
-    y = df2.reset_index(drop=True)
+    model = ks.KeywordSearch()
 
-    contains_caption_keyword = cc_keyword(df, 'caption')
-    pred = df.loc[contains_caption_keyword].reset_index(drop=True)
+    predicted_indices = model.predict(df, 'caption')
+    pred = df.loc[predicted_indices]
 
-    evaluate(y, pred)
+    evaluate_model(y, pred)
+
 if __name__ == "__main__":
     main()
 
