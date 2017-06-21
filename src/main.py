@@ -10,12 +10,8 @@ TODO
 6. visualize basic stats
 
 terminologies
-
-shot < scene < segment (story, commercial) < program
-
+shot < scene < segment (story, commercial) <(cutpoint) program
 '''
-
-
 import pandas as pd
 import numpy as np
 import re
@@ -47,59 +43,77 @@ def load_cut_files(path):
     col_names = ['vcr', 'recording_date', 'vcr_2', 'recording_date_2',
         'start', 'end', 'schedule', 'program']
     def date_parser(a, b):
-        c = np.core.defchararray.add(a, b)        
-        f = lambda x: pd.datetime.strptime(x, '%m/%d/%y%H:%M:%S')
-        return np.vectorize(f)(c)
+        c = '{} {}'.format(a, b)
+        f = lambda x: pd.datetime.strptime(x, '%m/%d/%y %H:%M:%S')
+        return f(c)
 
     #date_parse = lambda x: pd.datetime.strptime(x, '%Y:%m:%d %H:%M:%S')
     df = pd.read_csv(path, sep='\t', header=None, names=col_names,
-                     parse_dates={'cut_time': ['recording_date', 'start']}, date_parser=date_parser
+                     parse_dates={'cutpoint': ['recording_date', 'start']}, date_parser=date_parser
                      )
     #leave the first and the last timestamp as they tend to be noisy
     #they may not be the trust program boundaries so it hinders the training.
     #TODO: a counter argument is that they are roughly right, since we suffer from
     #shortage of labelled boundaries so it may be more useful to keep them?
-    df = df[['cut_time', 'vcr', 'program']][1:]
+    df = df[['cutpoint', 'vcr', 'program']][1:]
     return df
 
 def cc_keyword(df, *args):
     pattern = r'|'.join(args)
     return df['caption'].str.contains(pattern, flags=re.IGNORECASE)
 
-def evaluate(pred, y):
+def evaluate(y, pred):
     '''[summary]
     
     decision time window (grace period) of 3 seconds before and after the predicted timestamp
 
     Inputs:
-        pred {[Dataframe]} -- [description]
-        y {[Dataframe]} -- [description]
+        pred {[Dataframe]} -- [1 X N array of predicted cutpoints]
+        y {[Dataframe]} -- [1 X M array of true cutpoints]
 
     Returns:
         accuracy:
     '''
-    GRACE_PERIOD = 3.0 # seconds
-    # df['lower_bound'] = 
-    # df['upper_bound'] = 
+    GRACE_PERIOD = 1005 # seconds
+
+    pred = pred['mid'].values
+    y = y['cutpoint'].values
+
+    print('predicted cutpoints dim {}'.format(pred.shape))
+    print(pred)
+    print('labelled cutpoints dim {}'.format(y.shape))
+    print(y)
+
+    delta = np.timedelta64(GRACE_PERIOD, 's')
+    is_close = np.abs(y - pred[:,np.newaxis]) <= delta
+    print(is_close)
+    print(np.any(is_close, axis=1))
+    
+    # print(pred + delta)
+    # print("GSDJKFKDSJLF KJSDLK FJLSDJFLKSJ")
+
     pass
 
 def main():
     df, is_end, filename = load_caption_data(CAPTION_FILE_PATH)
     df2 = load_cut_files(CUT_FILE_PATH)
-    
+
     # print(df.head())
     # print("SLDKJFLKSJFD LJ LKSDJFLSDJLFKJSDLFJSLKJL")
-    print(df2.head())
+    # print(df2['cutpoint'].head())
     
     is_segment = df['marker'].str.contains('seg', case=False)
     is_story = df['caption'].str.contains('story', case=False)
     is_commercial = df['caption'].str.contains('commercial', case=False)
-    contains_caption_keyword = cc_keyword(df, 'caption', 'good morning')
-
     story_boundaries = df.loc[is_segment & is_story]
     commercial_boundaries = df.loc[is_segment & is_commercial]
-    predicted_boundaries = df.loc[contains_caption_keyword]
 
+    y = df2.reset_index(drop=True)
+
+    contains_caption_keyword = cc_keyword(df, 'caption')
+    pred = df.loc[contains_caption_keyword].reset_index(drop=True)
+
+    evaluate(y, pred)
 if __name__ == "__main__":
     main()
 
