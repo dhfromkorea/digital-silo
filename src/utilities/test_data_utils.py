@@ -1,21 +1,6 @@
-import sys, os.path
-sys.path.append(os.path.abspath('../'))
-
 import unittest
-
-from models.text.keyword_search import KeywordSearch
-from utilities.data_utils import *
-
-class KeywordSearchModelTest(unittest.TestCase):
-    def setUp(self):
-        self.dataframe = ''
-
-    def test_find_row_indices_that_contain_keywords(self):
-        
-        self.assertEqual('df', '')
-
-
-class DataUtilTest(unittest.TestCase):
+from data_utils import *
+class TestDataUtil(unittest.TestCase):
     def setUp(self):
         self.dataframe = ''
 
