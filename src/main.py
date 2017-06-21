@@ -21,7 +21,6 @@ terminologies
 from models.text import keyword_search as ks
 from utilities.data_utils import *
 
-import pandas as pd
 import numpy as np
 import re
 
@@ -45,15 +44,14 @@ def evaluate_model(y, pred):
     # print(y)
 
     delta = np.timedelta64(GRACE_PERIOD, 's')
-    is_close = np.abs(y - pred[:,np.newaxis]) <= delta
+
+    is_close = np.abs(y - pred[:, np.newaxis]) <= delta
     num_correct = np.sum(np.any(is_close, axis=1))
     num_cuts = len(y)
 
-    pred_accuracy = num_correct / num_cuts
-    
+    pred_accuracy = num_correct / num_cuts    
     print('The model got {} out of {} correct\naccuracy: {}'.format(num_correct, num_cuts, pred_accuracy))    
 
-    pass
 
 def main():
     df, _, _ = load_caption_data()
@@ -68,4 +66,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
