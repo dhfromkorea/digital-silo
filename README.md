@@ -2,10 +2,8 @@ this is where we maintain the todo
 
 
 ##Todos
-http://mklab.iti.gr/files/csvt11_preprint.pdf
-
-
-#Todos
+*figure out how to do TDD
+*http://mklab.iti.gr/files/csvt11_preprint.pdf
 *index of cutfiles and whether it's complete or not
 *get a decent definition of a program. commercials may exist within the same program. for e.g. news -> commercial -> short weather news -> commercial should this count? (e.g. 2006-06-13_0000_US_00000433_V5_MB13_VHS14_H1_MS.txt3 ~3h15m)
 * file index (cutpoints, caption avaiable)
