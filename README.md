@@ -1,17 +1,9 @@
 #SiloBreaker(to be decided)
 
 ##Todos
+*script module imports now relative 
+*set up a travis test that works with conda and python 3.6
 *write a bash script that downloads only the videos/subtitles that have cutfiles.
-*figure out how to do TDD
-*http://mklab.iti.gr/files/csvt11_preprint.pdf
-*index of cutfiles and whether it's complete or not
-*get a decent definition of a program. commercials may exist within the same program. for e.g. news -> commercial -> short weather news -> commercial should this count? (e.g. 2006-06-13_0000_US_00000433_V5_MB13_VHS14_H1_MS.txt3 ~3h15m)
-* file index (cutpoints, caption avaiable)
-*shortage of labelled samples: build a decent working classifier (that achieves 90+%) and let it generate samples. The supervising samples are considered labelled but extremely noisy so a noise-robust DNN model can learn from it.
-*noise (consistent, e.g 2006-06-13_v11)
-*just take this a single-frame image classification task? (but a stack of frames as input)
-*massive model -> how to reduce its size ... and apply a simpler model
-
 
 
 #Related Work

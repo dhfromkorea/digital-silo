@@ -1,9 +1,6 @@
-1   08/24/06    5   8/23/06 00:00:00    00:57:57    16:00   KCBS_DR_PHIL
-1   08/24/06    5   8/23/06 00:57:57    01:28:41    17:00   KCBS_CBS_2_News_at_5
-1   08/24/06    5   8/23/06 01:28:41    02:28:16    18:00   KCBS_CBS_2_News_at_6
-1   08/24/06    5   8/23/06 02:28:16    02:58:56    17:30   KCBS_CBS_Evening_News
-1   08/24/06    5   8/23/06 02:58:56    03:27:34    19:00   KCBS_Entertainment_Tonight
-1   08/24/06    5   8/23/06 03:27:34    04:06:02    11:00   KCBS_CBS_2_News_at_11
-1   08/24/06    5   8/23/06 04:06:02    05:08:24    23:35   KCBS_Late_Show_with_Dave_Letterman
-1   08/24/06    5   8/23/06 05:08:24    06:09:57    0:37    KCBS_Late_Late_Show_with_Craig_Ferguson
-1   08/24/06    5   8/24/06 06:09:57    08:12:52    7:00    KCBS_The_Early_Show
+3	10/10/06	3	10/9/06	00:00:00	02:30:28	16:00	KABC_Eyewitness_News_4PM
+3	10/10/06	3	10/9/06	02:30:28	03:02:21	18:30	KABC_World_News_With_Charles_Gibson
+3	10/10/06	3	10/10/06	03:02:21	05:02:06	7:00	KABC_Good_Morning_America
+3	10/10/06	3	10/10/06	05:02:06	06:02:21	9:00	KABC_Live_With_Regis_and_Kelly
+3	10/10/06	3	10/10/06	06:02:21	07:02:38	10:00	KABC_The_View
+3	10/10/06	3	10/10/06	07:02:38	08:03:49	11:00	KABC_Eyewitness_News_11AM

@@ -32,7 +32,7 @@ def _load_csv_data(path, sep, names, parse_dates, date_parser, dtype=None):
     try:
         df = pd.read_csv(path, sep=sep, header=None, names=names,
                          parse_dates=parse_dates, date_parser=date_parser,
-                         dtype=dtype, error_bad_lines=False)
+                         dtype=dtype)
         return df
     except Exception as e:
         print(e)
@@ -70,15 +70,16 @@ def load_program_cut_data(path=CUT_DB_PATH):
     col_names = ['vcr', 'recording_date', 'vcr_2', 'recording_date_2',
         'start', 'end', 'schedule', 'program']
     #date_parse = lambda x: pd.datetime.strptime(x, '%Y:%m:%d %H:%M:%S')
+
     df = _load_csv_data(path, sep='\t', names=col_names,
                        parse_dates={'cutpoint': ['recording_date', 'start']},
                        date_parser=_cut_date_parser)
     df.dropna()
-    df.reset_index()
 
     #leave the first and the last timestamp as they tend to be noisy
     #they may not be the trust program boundaries so it hinders the training.
     #TODO: a counter argument is that they are roughly right, since we suffer from
     #shortage of labelled boundaries so it may be more useful to keep them?
     df = df[['cutpoint', 'vcr', 'program']][1:]
+    df = df.reset_index(drop=True)
     return df
