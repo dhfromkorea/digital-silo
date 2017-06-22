@@ -1,14 +1,19 @@
-#SiloBreaker(to be decided)
+# SiloBreaker (may change later...)
 
-##Todos
+[![Build Status](https://travis-ci.org/dhfromkorea/digital-silo.svg?branch=master)](https://travis-ci.org/dhfromkorea/digital-silo)
+
+[![Build Status](https://travis-ci.org/dhfromkorea/digital-silo.svg?branch=dev)](https://travis-ci.org/dhfromkorea/digital-silo)
+
+## Todos
 *script module imports now relative 
 *set up a travis test that works with conda and python 3.6
 *write a bash script that downloads only the videos/subtitles that have cutfiles.
+*write a test module for keyword based search
+*write a module to visualize the predictions/cutpoints
 
+# Related Work
 
-#Related Work
-
-##important 
+## important 
 best performing CRF and nice summary of features used
 http://lxie.nwpu-aslp.org/papers/2012-IEICE-WangXX-A2-SCI-EI-JNL.pdf
 
@@ -52,7 +57,7 @@ https://arxiv.org/abs/1705.03281v1
 speaker identification
 https://arxiv.org/abs/1507.04831v1
 
-##not sure
+## not sure
 features selection/fusion for commercial detection
 https://arxiv.org/abs/1507.01209v1
 
@@ -100,7 +105,7 @@ http://videoanalysis.org/Prof._Dr._Rainer_Lienhart/Publications_files/MTAP2001.p
 scene segmentation metrics
 http://mklab.iti.gr/files/csvt12_preprint.pdf
 
-##not important
+## not important
 http://www.cs.cmu.edu/~mehrbod/SSeg07.pdf
 
 https://pdfs.semanticscholar.org/5c21/6db7892fa3f515d816f84893bfab1137f0b2.pdf
