@@ -1,6 +1,7 @@
 #SiloBreaker(to be decided)
 
 ##Todos
+*write a bash script that downloads only the videos/subtitles that have cutfiles.
 *figure out how to do TDD
 *http://mklab.iti.gr/files/csvt11_preprint.pdf
 *index of cutfiles and whether it's complete or not

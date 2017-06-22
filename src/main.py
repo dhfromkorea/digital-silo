@@ -26,14 +26,16 @@ import re
 
 def evaluate_model(y, pred):
     '''[summary]
-    
+        
     [description]
-
+    
+    TODO:
+        should handle duplicate counts 
     Args:
         y: [description]
         pred: [description]
     '''
-    GRACE_PERIOD = 5 # seconds
+    GRACE_PERIOD = 1 # seconds
 
     pred = pred['mid'].values
     y = y['cutpoint'].values
@@ -55,10 +57,9 @@ def evaluate_model(y, pred):
 
 def main():
     df, _, _ = load_caption_data()
-    y = load_cutfiles()
+    y = load_program_cut_data()
 
     model = ks.KeywordSearch()
-
     predicted_indices = model.predict(df, 'caption')
     pred = df.loc[predicted_indices]
 
