@@ -60,8 +60,8 @@ def main():
     y = load_program_cut_data()
 
     model = ks.KeywordSearch()
-    predicted_indices = model.predict(df, 'caption')
-    pred = df.loc[predicted_indices]
+    has_keywords = model.predict(df, 'caption')
+    pred = df.loc[has_keywords]
 
     evaluate_model(y, pred)
 
