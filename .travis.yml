@@ -13,7 +13,7 @@ install:
   - conda info -a
   - conda env create python=$TRAVIS_PYTHON_VERSION -f environment.yml
   - source activate digital-silo
-  - python setup.py install
+# - python setup.py install
 
 script:
   cd src/utilities/
