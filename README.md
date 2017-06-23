@@ -1,16 +1,19 @@
 # SiloBreaker (may change later...)
 
-[![Build Status](https://travis-ci.org/dhfromkorea/digital-silo.svg?branch=master)](https://travis-ci.org/dhfromkorea/digital-silo)
+[![Master Build Status](https://travis-ci.org/dhfromkorea/digital-silo.svg?branch=master)](https://travis-ci.org/dhfromkorea/digital-silo)
 
-[![Build Status](https://travis-ci.org/dhfromkorea/digital-silo.svg?branch=dev)](https://travis-ci.org/dhfromkorea/digital-silo)
+[![Dev Build Status](https://travis-ci.org/dhfromkorea/digital-silo.svg?branch=dev)](https://travis-ci.org/dhfromkorea/digital-silo)
 
 ## Todos
-*script module imports now relative 
 *set up a travis test that works with conda and python 3.6
-*write a bash script that downloads only the videos/subtitles that have cutfiles.
 *write a test module for keyword based search
-*write a module to visualize the predictions/cutpoints
+*update keyword search module to take two arguments (program length, timewindow)
+*write a module to visualize the predictions(for each keyword used) /program cuts
+*fix readme
 
+*script module imports now relative 
+*write a bash script that downloads only the videos/subtitles that have cutfiles.
+*write a python/bash script to strip away rows that have SEG markers (for training)
 # Related Work
 
 ## important 
