@@ -35,8 +35,7 @@ def evaluate_model(y, pred):
         y: [description]
         pred: [description]
     '''
-    GRACE_PERIOD = 1 # seconds
-
+    GRACE_PERIOD = 10 # seconds
     pred = pred['mid'].values
     y = y['cutpoint'].values
 
@@ -51,18 +50,22 @@ def evaluate_model(y, pred):
     num_correct = np.sum(np.any(is_close, axis=1))
     num_cuts = len(y)
 
-    pred_accuracy = num_correct / num_cuts    
-    print('The model got {} out of {} correct\naccuracy: {}'.format(num_correct, num_cuts, pred_accuracy))    
+    pred_accuracy = num_correct / num_cuts
+
+    # TODO: convert the metrics to F1 score, pointing to recall/precision respectively
+    msg = 'There were {} true program cuts. The model predicted ' \
+          '{} cuts, giving the accuracy of: {:0.2f}'    
+    print(msg.format(num_cuts, num_cuts, pred_accuracy))    
 
 
 def main():
-    df, _, _ = load_caption_data()
-    y = load_program_cut_data()
+    # currently only 0-suffixed test_caption/cuts data are in sync
+    # the rest of the pairs cannot be evaluated.
+    df, _, _ = load_caption_data('test_data/test_caption_0.txt3')
+    y = load_program_cut_data('test_data/test_program_cuts_0.cuts')
 
     model = ks.KeywordSearch()
-    has_keywords = model.predict(df, 'caption')
-    pred = df.loc[has_keywords]
-
+    pred = model.predict(df, keywords=['caption'], merge_time_window=20)
     evaluate_model(y, pred)
 
 if __name__ == "__main__":
