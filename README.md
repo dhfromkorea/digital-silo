@@ -27,6 +27,7 @@ The easiest way to get the dependencies is to use Anaconda.
 ```
 conda env create -f environment.yml
 ```
+
 If you prefer using virtualenv or other forms, you may want to install the following.
 * python=3.6.1
 * numpy=1.13.0
@@ -37,19 +38,22 @@ If you prefer using virtualenv or other forms, you may want to install the follo
 ```
 
 ### Run models
+Your playground for loading different models and evaluate them against test data is main.py.
+
 ```
 cd src/
 python main.py
 ```
 
 The available models (to be added) are:
-
 * text: KeywordSearch
 * audio:
 * video: 
 
 
 ## Testing
+A new module will be preceded by a test module (TDD). Travis handles continuous integration whose build status is showing at the top section of this document.
+
 ```
 cd src/
 pytest
