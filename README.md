@@ -7,7 +7,7 @@
 ### Dependencies
 The easiest way to get the dependencies is to use Anaconda.
 
-```
+```bash
 conda env create -f environment.yml
 ```
 
@@ -21,11 +21,18 @@ If you prefer using virtualenv or other forms, you may want to install the follo
 
 
 ### Run models
-Your playground for loading different models and evaluate them against test data is main.py.
+Your playground for loading different models and evaluate them against test data is src/main.py.
 
-```
-cd src/
-python main.py
+```python
+caption_data, _, _ = load_caption_data('test_data/test_caption_0.txt3')
+y = load_program_cut_data('test_data/test_program_cuts_0.cuts')
+
+
+model = ks.KeywordSearch()
+
+pred = model.predict(caption_data, keywords=['caption'], merge_time_window=20)
+
+evaluate_model(y, pred)
 ```
 
 The available models (to be added) are:
@@ -37,7 +44,7 @@ The available models (to be added) are:
 ### Testing
 A new module will be preceded by a test module (TDD). Travis handles continuous integration whose build status is showing at the top section of this document.
 
-```
+```bash
 cd src/
 pytest
 ```
@@ -45,12 +52,10 @@ pytest
 
 ## Todos
 * write the following todos in the github issues
-
 * write a test module for keyword based search
 * update keyword search module to take two arguments (program length, timewindow)
 * write a module to visualize the predictions(for each keyword used) /program cuts
 * fix readme
-
 * commercial detection?
 * script module imports now relative 
 * write a bash script that downloads only the videos/subtitles that have cutfiles.
