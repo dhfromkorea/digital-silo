@@ -10,8 +10,7 @@ class TestKeywordSearchModel(unittest.TestCase):
     
     def setUp(self):
         files = load_caption_files(TEST_CAPTION_FILE_PATH)
-        for f in files:
-            df, metadata = f
+        df, metadata = next(files)
         self.caption_data = df
         self.model = KeywordSearch()
         self.keywords = ['caption', 'story', 'commercial']
@@ -41,6 +40,7 @@ class TestKeywordSearchModel(unittest.TestCase):
         
         msg = 'the lines that are off by less than {} seconds must be merged'
         self.assertTrue(is_merged, msg.format(MERGE_TIME_WINDOW))
+
 
 if __name__ == '__main__':
     # TODO: is this the right thing todo ?

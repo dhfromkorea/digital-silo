@@ -20,10 +20,8 @@ class TestDataUtil(unittest.TestCase):
                             self.test_caption_filename['ext']])
 
         single_file_path = ''.join([TEST_PROGRAM_BOUNDARY_FILEPATH, filename])
-        files = load_caption_files(single_file_path)
-        
-        for f in files:
-            df, metadata = f
+        files = load_caption_files(single_file_path)        
+        df, metadata = next(files)
 
         self.assertEqual(len(df.columns), 5, 'should have 5 columns')
         self.assertTrue(df.loc[0]['marker'].startswith('SEG'), 'should have marker column starting with SEG')
@@ -49,15 +47,24 @@ class TestDataUtil(unittest.TestCase):
                             self.test_cut_filename['ext']])
         
         path = '{}{}'.format(TEST_PROGRAM_BOUNDARY_FILEPATH, filename)
-        y = load_program_cut_files(path)
+        files = load_program_cut_files(path)
+        y, metadata = next(files)
 
         self.assertEqual(len(y.columns), 3, 'should have 3 columns')
         self.assertIsInstance(y.loc[0]['cutpoint'], pd.Timestamp, 'should have marker column starting with SEG')
 
 
     def test_load_multiple_cut_files(self):
-        
-        self.assertEqual('failing', '', 'must batch multiple caption data')
+        path = 'test_data/'
+        files = load_program_cut_files(path, recursive_search=True)
+
+        num_files = 0
+        for f in files:
+            y, metadata = f
+            num_files += 1
+            self.assertEqual(len(y.columns), 3, 'should have 3 columns')
+            self.assertIsInstance(y.loc[0]['cutpoint'], pd.Timestamp, 'should have marker column starting with SEG')
+        self.assertTrue(num_files > 1, 'it should load more than one cut file.')
 
 if __name__ == '__main__':
     unittest.main()
