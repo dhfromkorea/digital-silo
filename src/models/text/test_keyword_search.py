@@ -1,5 +1,7 @@
 import unittest
 import numpy as np
+import random
+import glob
 from src.models.text.keyword_search import *
 from src.utilities.data_utils import load_caption_files
 
@@ -9,12 +11,18 @@ TEST_CAPTION_FILE_PATH = TEST_DB_PATH + 'test_caption_0.txt3'
 class TestKeywordSearchModel(unittest.TestCase):
     
     def setUp(self):
-        files = load_caption_files(TEST_CAPTION_FILE_PATH)
+        search_path = TEST_DB_PATH + '*.txt3'
+        file_paths = [p for p in glob.iglob(search_path)]
+        file_path = random.choice(file_paths)
+
+        files = load_caption_files(file_path)                
         df, metadata = next(files)
+        
         self.caption_data = df
         self.model = KeywordSearch()
-        self.keywords = ['caption', 'story', 'commercial']
         #TODO: have a db of commonly used words
+        #this should live within KeywordSearch
+        self.keywords = ['caption', 'story', 'commercial']
 
     def test_find_lines_match_single_keyword(self):
         keywords = self.keywords[0:1]

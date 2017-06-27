@@ -1,17 +1,16 @@
 import pandas as pd
 import numpy as np
 import glob
+import os
 
 
 def _date_parser(pattern):
     def f(date):
-        parsed = ''
         try:
             parsed = pd.datetime.strptime(date, pattern)
         except Exception as e:
-            # strip off the first 4/8 lines (header) the last line (footer)
-            # print(e)
-            pass
+            # the first 4 or 8 lines (header) and the last line won't be parsed
+            parsed = ''            
         return parsed    
     return f
 
@@ -39,25 +38,21 @@ def _load_csv_file(path, sep, names, parse_dates, date_parser, dtype=None):
 def _load_single_caption_file(path):        
     col_names = ['start', 'end', 'marker', 'caption']
     df = _load_csv_file(path, sep='|', names=col_names,
-                     parse_dates=['start', 'end'], date_parser=_caption_date_parser,
-                     dtype={'start':str, 'end':str})
+                        parse_dates=['start', 'end'],
+                        date_parser=_caption_date_parser,
+                        dtype={'start':str, 'end':str})
+
     df = df.dropna()
     df = df.reset_index(drop=True)
     df['mid'] = df['start'] + 0.5 * (df['end'] - df['start'])
-
-    metadata = {
-                   'filename': '',
-                   'date': '',
-                   'vcr_index':''
-                }
-    
+    metadata = annotate_file(path)
     return (df, metadata)
 
 
 def _load_single_cut_file(path):
     col_names = ['vcr', 'recording_date', 'vcr_2', 'recording_date_2',
         'start', 'end', 'schedule', 'program']
-    df = _load_csv_file(path, sep='\t', names=col_names,
+    df = _load_csv_file(path, sep=r'\s+', names=col_names,
                        parse_dates={'cutpoint': ['recording_date', 'start']},
                        date_parser=_cut_date_parser)
     df.dropna()
@@ -69,14 +64,26 @@ def _load_single_cut_file(path):
     df = df[['cutpoint', 'vcr', 'program']][1:]
     df = df.reset_index(drop=True)
 
-    metadata = {
-                   'filename': '',
-                   'date': '',
-                   'vcr_index':''
-                }
+    metadata = annotate_file(path)
 
     return (df, metadata)
 
+def annotate_file(path):
+    base = os.path.basename(path)
+    filename, ext = os.path.splitext(base)
+    filename_components = filename.split('_')
+    if len(filename_components) == 9:            
+        metadata = {
+                       'filename': filename,
+                       'filetype': ext,
+                       'recording_end_date': filename_components[0],
+                       'vcr_index': filename_components[4]
+                    }
+    else:
+        print('corrupted filename: {}'.format(filename))
+        # corrupted file name
+        metadata = {}
+    return metadata
 
 def load_files(root_path, file_extension='txt3', recursive_search=False):
     if not file_extension in ['txt3', 'cuts']:
@@ -96,7 +103,7 @@ def load_files(root_path, file_extension='txt3', recursive_search=False):
         if file_extension == 'txt3':        
             for path in filepaths:
                 yield _load_single_caption_file(path)
-        else:
+        else:                
             for path in filepaths:
                 yield _load_single_cut_file(path)
 
