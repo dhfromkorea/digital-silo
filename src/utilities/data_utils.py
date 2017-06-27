@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-
+import glob
 
 CAPTION_DB_PATH = '../data/2006/2006-06/2006-06-13/2006-06-13_0000_US_00000141_V11_MB12_VHS13_H2_JK.txt3'
 CUT_DB_PATH = '../data/2006/2006-06/2006-06-13/2006-06-13_0000_US_00000141_V11_MB12_VHS13_H2_JK.cuts'
@@ -28,7 +28,7 @@ def _cut_date_parser(date_A, date_B):
     return _date_parser('%m/%d/%y %H:%M:%S')(date)
 
 
-def _load_csv_data(path, sep, names, parse_dates, date_parser, dtype=None):
+def _load_csv_file(path, sep, names, parse_dates, date_parser, dtype=None):
     try:
         df = pd.read_csv(path, sep=sep, header=None, names=names,
                          parse_dates=parse_dates, date_parser=date_parser,
@@ -38,7 +38,25 @@ def _load_csv_data(path, sep, names, parse_dates, date_parser, dtype=None):
         print(e)
         pass
 
-def load_caption_data(path=CAPTION_DB_PATH):
+def _load_single_caption_file(path):
+    col_names = ['start', 'end', 'marker', 'caption']
+    df = _load_csv_file(path, sep='|', names=col_names,
+                     parse_dates=['start', 'end'], date_parser=_caption_date_parser,
+                     dtype={'start':str, 'end':str})
+    df = df.dropna()
+    df = df.reset_index(drop=True)
+    df = df[:-1]
+    df['mid'] = df['start'] + 0.5 * (df['end'] - df['start'])
+    metadata = {
+                   'filename': '',
+                   'date': '',
+                   'vcr_index':''
+                }
+    
+    return (df, metadata)
+
+
+def load_caption_files(root_path, recursive_search=False):
     '''[summary]
     
     [description]
@@ -47,18 +65,21 @@ def load_caption_data(path=CAPTION_DB_PATH):
         [description]
         [type]
     '''
-    col_names = ['start', 'end', 'marker', 'caption']
-    df = _load_csv_data(path, sep='|', names=col_names,
-                     parse_dates=['start', 'end'], date_parser=_caption_date_parser,
-                     dtype={'start':str, 'end':str})
-    df = df.dropna()
-    df = df.reset_index(drop=True)
-    is_end, _, filename, _ = df.iloc[df.shape[0] - 1]
-    df = df[:-1]
-    df['mid'] = df['start'] + 0.5 * (df['end'] - df['start'])
-    return (df, is_end, filename)
+    if root_path.endswith('.txt3'):
+        #single file=        
+        yield _load_single_caption_file(root_path)
+    else:
+        if root_path.endswith('/'):
+            root_path += '**/*.txt3'
+        else:
+            root_path += '/**/*.txt3'
+        filepaths = glob.iglob(root_path, recursive=recursive_search)
+        
+        for path in filepaths:
+            yield _load_single_caption_file(path)
+    
 
-def load_program_cut_data(path=CUT_DB_PATH):
+def load_program_cut_files(path):
     '''[summary]
     
     [description]
@@ -71,7 +92,7 @@ def load_program_cut_data(path=CUT_DB_PATH):
         'start', 'end', 'schedule', 'program']
     #date_parse = lambda x: pd.datetime.strptime(x, '%Y:%m:%d %H:%M:%S')
 
-    df = _load_csv_data(path, sep='\t', names=col_names,
+    df = _load_csv_file(path, sep='\t', names=col_names,
                        parse_dates={'cutpoint': ['recording_date', 'start']},
                        date_parser=_cut_date_parser)
     df.dropna()

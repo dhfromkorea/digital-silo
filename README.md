@@ -48,17 +48,3 @@ A new module will be preceded by a test module (TDD). Travis handles continuous 
 cd src/
 pytest
 ```
-
-
-## Todos
-* write the following todos in the github issues
-* write a test module for keyword based search
-* update keyword search module to take two arguments (program length, timewindow)
-* write a module to visualize the predictions(for each keyword used) /program cuts
-* fix readme
-* commercial detection?
-* script module imports now relative 
-* write a bash script that downloads only the videos/subtitles that have cutfiles.
-* write a python/bash script to strip away rows that have SEG markers (for training)
-* try coveralls:https://coveralls.io/sign-up
-* opencv orb for logo detection

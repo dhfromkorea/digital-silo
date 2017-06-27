@@ -1,12 +1,17 @@
 import unittest
 import numpy as np
 from src.models.text.keyword_search import *
-from src.utilities.data_utils import load_caption_data
+from src.utilities.data_utils import load_caption_files
 
-TEST_DB_PATH = 'test_data/test_caption_0.txt3'
+TEST_DB_PATH = 'test_data/'
+TEST_CAPTION_FILE_PATH = TEST_DB_PATH + 'test_caption_0.txt3'
+
 class TestKeywordSearchModel(unittest.TestCase):
+    
     def setUp(self):
-        df, _, _ = load_caption_data(TEST_DB_PATH)
+        files = load_caption_files(TEST_CAPTION_FILE_PATH)
+        for f in files:
+            df, metadata = f
         self.caption_data = df
         self.model = KeywordSearch()
         self.keywords = ['caption', 'story', 'commercial']

@@ -4,10 +4,6 @@ import numpy as np
 class KeywordSearch(object):
     '''[summary]
     
-    Todos:
-        apply minimum program length
-        apply minimum time window
-        to merge cuts that are close to one another
     [description]
     '''
     def __init__(self):
