@@ -1,13 +1,18 @@
-import re
 import numpy as np
+import re
+from src.utilities.data_utils import *
+from src.utilities.metrics import *
+
 
 class KeywordSearch(object):
     '''[summary]
     
     [description]
     '''
-    def __init__(self):
+    def __init__(self, keywords=['caption'], merge_time_window=0):
         super(KeywordSearch, self).__init__()
+        self._merge_time_window = merge_time_window
+        self._keywords = keywords
 
     def _merge_matches(self, matched_lines, merge_time_window):
         # TODO: this is costly. we should improve this later
@@ -26,14 +31,32 @@ class KeywordSearch(object):
                 last_match_time = cur_match_time            
         return merged
 
-        
-    def predict(self, dataframe, keywords, merge_time_window=0):
+    @property
+    def merge_time_window(self):
+        return self._merge_time_window
+
+    @merge_time_window.setter
+    def merge_time_window(self, num_minutes):
+        self._merge_time_window = num_minutes
+
+    @property
+    def keywords(self):
+        return self._keywords
+
+    @keywords.setter
+    def keywords(self, keywords=[]):
+        self._keywords = keywords
+
+    def test(self, root_path_captions, root_path_cuts=None):
+        return accuracy_score_f1(self, root_path_captions, root_path_cuts)
+
+    def predict(self, X):
         '''[summary]
         
         [description]
         
         Args:
-            dataframe: [description]
+            X: [description]
             keywords: [description]
             merge_time_window: [merge time window in minutes] (default: {0})
         
@@ -41,11 +64,11 @@ class KeywordSearch(object):
             [description]
             [type]
         '''
-        pattern = r'|'.join(keywords)
-        is_matched =  dataframe['caption'].str.contains(pattern, flags=re.IGNORECASE)
-        matched_lines = dataframe[is_matched]
+        pattern = r'|'.join(self.keywords)
+        is_matched =  X['caption'].str.contains(pattern, flags=re.IGNORECASE)
+        matched_lines = X[is_matched]
 
-        if merge_time_window > 0:
-            matched_lines = self._merge_matches(matched_lines, merge_time_window)
+        if self.merge_time_window > 0:
+            matched_lines = self._merge_matches(matched_lines, self.merge_time_window)
         
-        return dataframe.iloc[matched_lines.index]
+        return X.iloc[matched_lines.index]

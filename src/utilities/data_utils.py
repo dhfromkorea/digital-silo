@@ -82,7 +82,7 @@ def annotate_file(path):
     else:
         print('corrupted filename: {}'.format(filename))
         # corrupted file name
-        metadata = {}
+        metadata = None
     return metadata
 
 def load_files(root_path, file_extension='txt3', recursive_search=False):
@@ -93,6 +93,7 @@ def load_files(root_path, file_extension='txt3', recursive_search=False):
         if file_extension == 'txt3':
             yield _load_single_caption_file(root_path)
         else:
+            # TODO: caption filwee
             yield _load_single_cut_file(root_path)
     else:
         if not root_path.endswith('/'):
@@ -130,3 +131,13 @@ def load_program_cut_files(root_path, recursive_search=False):
         [type]
     '''
     return load_files(root_path, file_extension='cuts', recursive_search=True)
+
+
+def find_matching_filepath(filename, filetype, search_path):    
+    pattern = '{}/**/{}.{}'.format(search_path, filename, filetype)
+    paths = glob.glob(pattern, recursive=True)
+    
+    if len(paths) > 1:
+        print('duplicate files with matching caption filename')
+    return paths[0]
+

@@ -5,43 +5,46 @@ import glob
 from src.models.text.keyword_search import *
 from src.utilities.data_utils import load_caption_files
 
-TEST_DB_PATH = 'test_data/'
-TEST_CAPTION_FILE_PATH = TEST_DB_PATH + 'test_caption_0.txt3'
 
 class TestKeywordSearchModel(unittest.TestCase):
     
     def setUp(self):
-        search_path = TEST_DB_PATH + '*.txt3'
-        file_paths = [p for p in glob.iglob(search_path)]
+        search_path = 'test_data/' + '*.txt3'
+        file_paths = glob.glob(search_path)
         file_path = random.choice(file_paths)
 
-        files = load_caption_files(file_path)                
-        df, metadata = next(files)
+        caption_data, metadata = next(load_caption_files(file_path))                        
+        self.X = caption_data
+        self.X_metadata = metadata
         
-        self.caption_data = df
-        self.model = KeywordSearch()
-        #TODO: have a db of commonly used words
-        #this should live within KeywordSearch
         self.keywords = ['caption', 'story', 'commercial']
+        self.model = KeywordSearch(self.keywords)
+
 
     def test_find_lines_match_single_keyword(self):
-        keywords = self.keywords[0:1]
-        matched_lines = self.model.predict(self.caption_data, keywords)
+        self.model.keywords = self.keywords[0:1]
+        
+        matched_lines = self.model.predict(self.X)
         line = matched_lines['caption'].iloc[0].lower()
-        check_match = any([w in line for w in keywords])
     
-        self.assertTrue(check_match,'keyword-matching lines must contain the searched-for keyword')
+        self.assertTrue(self.keywords[0] in line,'keyword-matching lines must contain the searched-for keyword')
+
 
     def test_find_lines_match_multiple_keywords(self):
-        keywords = self.keywords
-        matched_lines = self.model.predict(self.caption_data, keywords)
+        self.model.keywords = self.keywords
+        matched_lines = self.model.predict(self.X)
         line = matched_lines['caption'].iloc[0].lower()
-        check_matches = any([w in line for w in keywords])
+        check_matches = any([w in line for w in self.keywords])
         self.assertTrue(check_matches,'keyword-matching lines must contain any of the keywords searched for')
 
+
     def test_merge_neighboring_caption_lines(self):
-        MERGE_TIME_WINDOW = 5 # minutes
-        matched_lines = self.model.predict(self.caption_data, self.keywords, MERGE_TIME_WINDOW)
+        self.assertTrue(self.model.merge_time_window == 0, 'merge time window should be zero')
+        MERGE_TIME_WINDOW = 5
+        self.model.merge_time_window = MERGE_TIME_WINDOW 
+        self.assertTrue(self.model.merge_time_window == 5, 'merge time window should be 5 minutes')
+
+        matched_lines = self.model.predict(self.X)
 
         deltas = matched_lines['mid'].diff().dropna()
         is_merged = all(deltas > np.timedelta64(MERGE_TIME_WINDOW, 's'))
