@@ -26,7 +26,7 @@ class KeywordSearch(object):
                 last_match_time = cur_match_time            
         return merged
 
-
+        
     def predict(self, dataframe, keywords, merge_time_window=0):
         '''[summary]
         
