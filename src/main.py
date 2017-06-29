@@ -22,8 +22,7 @@ from models.text import keyword_search as ks
 def main():
     # train here
     keywords = ['caption', 'story', 'commercial']
-    merge_time_window = 0
-    model = ks.KeywordSearch(keywords, merge_time_window)
+    model = ks.KeywordSearch(keywords)
     
     # validate to tune hyperparams here
     
