@@ -10,7 +10,7 @@ terminologies
     A = shot cuts
     B = scene cuts
     C = story cuts (or commercial)
-    D = program cuts
+    D = program cut
 
 '''
 

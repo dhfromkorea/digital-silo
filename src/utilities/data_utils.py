@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import glob
 import os
-
+import math
 
 def _date_parser(pattern):
     def f(date):
@@ -141,3 +141,39 @@ def find_matching_filepath(filename, filetype, search_path):
         print('duplicate files with matching caption filename')
     return paths[0]
 
+
+def split_video_to_clips(start_time, end_time, interval):
+    pass
+
+def split_audio_to_clips(start_time, end_time, interval):
+    pass
+
+def split_caption_to_docs(X, interval=10):
+    '''[summary]
+    
+    [description]
+    
+    should handle both types of caption (original, speech-recognized)
+    
+    Args:
+        X: [description]
+        interval: [in seconds] (default: {10 seconds})
+    '''
+    freq = '{}s'.format(interval)
+    grouper = pd.Grouper(key='start',freq=freq)
+    grouped = X.groupby(grouper)
+    return grouped
+
+def convert_program_cuts_to_y(cuts, docs, interval=10):    
+    time_splits = list(docs.groups.keys())
+    y = pd.DataFrame(time_splits, columns=['start'])
+    y['is_program_boundary'] = False
+        
+    interval = np.timedelta64(10, 's')
+    cuts = cuts['cutpoint'].values
+    # TODO: try a vectorized solution later on    
+    for cut_time in cuts:
+        mask = ((y['start']) <= cut_time) & (cut_time < (y['start'] + interval))
+        y['is_program_boundary'] = y['is_program_boundary'] | mask
+
+    return y

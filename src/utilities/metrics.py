@@ -20,7 +20,7 @@ def _evaluate_accuracy(y, pred, grace_period=60):
     # print(pred)
     # print('labelled cutpoints dim {}'.format(y.shape))
     # print(y)
-
+ 
     delta = np.timedelta64(grace_period, 's')
     is_close = np.abs(y - pred[:, np.newaxis]) <= delta
 
