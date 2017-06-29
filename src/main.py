@@ -23,7 +23,6 @@ def main():
     # train here
     keywords = ['caption', 'story', 'commercial']
     model = ks.KeywordSearch(keywords)
-    
     # validate to tune hyperparams here
     
     # test here

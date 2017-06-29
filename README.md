@@ -21,18 +21,16 @@ If you prefer using virtualenv or other forms, you may want to install the follo
 
 
 ### Run models
-Your playground for loading different models and evaluate them against test data is src/main.py.
+Your playground for loading different models and evaluate them against test data is src/main.py. Run main.py at src/.
 
 ```python
-caption_data, _, _ = load_caption_data('test_data/test_caption_0.txt3')
-y = load_program_cut_data('test_data/test_program_cuts_0.cuts')
+keywords = ['caption', 'story', 'commercial']
+model = ks.KeywordSearch(keywords)
+# validate to tune hyperparams here
 
-
-model = ks.KeywordSearch()
-
-pred = model.predict(caption_data, keywords=['caption'], merge_time_window=20)
-
-evaluate_model(y, pred)
+# test here
+f1_score= model.test('test_data/')
+print(f1_score)
 ```
 
 The available models (to be added) are:
