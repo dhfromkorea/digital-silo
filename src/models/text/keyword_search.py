@@ -68,7 +68,7 @@ class KeywordSearch(object):
         is_matched =  X['caption'].str.contains(pattern, flags=re.IGNORECASE)
         matched_lines = X[is_matched]
 
-        if self.merge_time_window > 0:
-            matched_lines = self._merge_matches(matched_lines, self.merge_time_window)
-        
-        return X.iloc[matched_lines.index]
+        # if self.merge_time_window > 0:
+        #     matched_lines = self._merge_matches(matched_lines, self.merge_time_window)
+        # return X.iloc[matched_lines.index]
+        return matched_lines

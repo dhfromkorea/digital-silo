@@ -162,11 +162,18 @@ def split_caption_to_docs(X, interval=10):
     freq = '{}s'.format(interval)
     grouper = pd.Grouper(key='start',freq=freq)
     grouped = X.groupby(grouper)
-    return grouped
+    # TODO: this function takes too much time!
+    def _combine_rows(X):
+        # params = dict(start=X['start'].min(), 
+        #               end=X['end'].max(), 
+        #               caption=concat_caption)
+        params = dict(caption=' '.join(X['caption'])) 
+        return pd.Series(params)
+    
+    return grouped.apply(_combine_rows)
 
-def convert_program_cuts_to_y(cuts, docs, interval=10):    
-    time_splits = list(docs.groups.keys())
-    y = pd.DataFrame(time_splits, columns=['start'])
+def convert_program_cuts_to_y(cuts, X, interval=10):    
+    y = pd.DataFrame(X.index, columns=['start'])
     y['is_program_boundary'] = False
         
     interval = np.timedelta64(10, 's')
