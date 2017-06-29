@@ -3,6 +3,8 @@ from src.utilities.data_utils import *
 
 
 def _evaluate_accuracy(y, pred, grace_period=60):
+    pred.reset_index(drop=True)
+    
     y = y['is_program_boundary']
     TP = (y & pred).sum() 
     TN = (-y & -pred).sum()

@@ -39,4 +39,4 @@ class KeywordSearch(object):
         '''
         pattern = r'|'.join(self.keywords)
         is_matched =  X['caption'].str.contains(pattern, flags=re.IGNORECASE)
-        return is_matched.reset_index(drop=True)
+        return is_matched
