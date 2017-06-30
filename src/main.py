@@ -16,17 +16,51 @@ terminologies
 
 import sys
 sys.path.insert(0, '../')
+import random
+import glob
+from src.models.text import keyword_search as ks
+from src.utilities.data_utils import *
 
-from models.text import keyword_search as ks
+import datetime
+TEST_DATA_PATH = 'test_data/'
 
-def main():
+
+def try_keyword_search():
     # train here
     keywords = ['caption', 'story', 'commercial']
     model = ks.KeywordSearch(keywords)
     # validate to tune hyperparams here
     
     # test here
-    f1_score= model.test('test_data/')
+    f1_score= model.test(TEST_DATA_PATH)
 
+def main():
+    search_path = TEST_DATA_PATH +'.txt3'
+    X_paths = glob.glob(search_path)
+    file_path = random.choice(X_paths)
+    captions = load_caption_files(file_path, keep_story_boundary=True)                
+    caption, metadata = next(captions)
+
+    is_story_boundary = caption['caption'].str.contains('type=', flags=re.IGNORECASE) 
+
+    t_sb = caption[is_story_boundary]['t_start']
+
+    y_path = find_y_path_from_X_filename(metadata['filename'], TEST_DATA_PATH)
+    pb_files = load_program_boundary_files(y_path)                
+    pb, _ = next(pb_files)
+
+    t_pb = pb['t_program_boundary']
+    
+    def find_nearest_date(dates, compared_to):
+        return min(dates, key=lambda x: abs(x - compared_to))
+
+    min_deltas = []
+    for pb in t_pb:
+        sb = find_nearest_date(t_sb, pb)
+        md = (pb - sb) if (pb > sb) else (sb - pb) 
+        min_deltas.append(md)
+        print(md)
+    print(metadata['filename'])
+    print(sum(min_deltas, datetime.timedelta())/len(min_deltas))
 if __name__ == "__main__":
     main()

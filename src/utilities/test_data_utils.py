@@ -3,7 +3,7 @@ import pandas as pd
 import random
 import glob
 import os
-import math
+import re
 from src.utilities.data_utils import *
 
 
@@ -106,8 +106,8 @@ class TestDataUtilProgramBoundary(unittest.TestCase):
 
     def test_convert_program_boundaries_to_y(self):
         file_path = random.choice(self.X_paths)
-        files = load_caption_files(file_path)                
-        caption, metadata = next(files)
+        captions = load_caption_files(file_path)                
+        caption, metadata = next(captions)
         X = split_caption_to_X(caption, interval=10)
 
         file_path = random.choice(self.y_paths)
@@ -115,7 +115,24 @@ class TestDataUtilProgramBoundary(unittest.TestCase):
         p_boundaries, _ = next(files)
 
         y = convert_program_boundaries_to_y(p_boundaries, X)
-        self.assertEqual(len(y), len(X), 'the lengths of X and y should be the same.')
+        self.assertEqual(y.shape[0], X.shape[0], 'the length of X and y should be the same.')
+
+
+class TestDataUtilStoryBoundary(unittest.TestCase):
+    def setUp(self):
+        self.root_path = TEST_DATA_PATH
+        search_path_X = self.root_path + '*.txt3'
+        self.X_paths = glob.glob(search_path_X)
+
+
+    def test_remove_story_boundary_annotation_from_caption(self):
+        file_path = random.choice(self.X_paths)
+        captions = load_caption_files(file_path)                
+        caption, _ = next(captions)
+        is_story_boundary = caption['caption'].str.contains('type=', flags=re.IGNORECASE) 
         
+        self.assertFalse(is_story_boundary.any(), 'should not contain any story boundaries in caption.')
+
+
 if __name__ == '__main__':
     unittest.main()

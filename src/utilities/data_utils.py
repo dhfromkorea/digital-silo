@@ -3,6 +3,8 @@ import numpy as np
 import glob
 import os
 import math
+import re
+
 
 def _date_parser(pattern):
     def f(date):
@@ -35,7 +37,7 @@ def _load_csv_file(path, sep, names, parse_dates, date_parser, dtype=None):
         pass
 
 
-def _load_single_caption_file(path):        
+def _load_single_caption_file(path, keep_story_boundary=False):        
     col_names = ['t_start', 't_end', 'marker', 'caption']
     df = _load_csv_file(path, sep='|', names=col_names,
                         parse_dates=['t_start', 't_end'],
@@ -45,6 +47,9 @@ def _load_single_caption_file(path):
     df.drop(['marker', 't_end'], axis=1, inplace=True)
     df = df.dropna()
     df = df.reset_index(drop=True)
+    # story boundaries removed as ASR-generated caption files won't have these
+    if not keep_story_boundary:
+        df = _remove_story_boundary_annotation(df)
     metadata = annotate_file(path)    
     
     return (df, metadata)
@@ -84,13 +89,13 @@ def annotate_file(path):
         metadata = None
     return metadata
 
-def load_files(root_path, file_extension='txt3', recursive_search=False):
+def load_files(root_path, file_extension='txt3', recursive_search=True, keep_story_boundary=False):
     if not file_extension in ['txt3', 'cuts']:
         raise Exception('UnsupportedDataType')
 
     if root_path.endswith(file_extension):
         if file_extension == 'txt3':
-            yield _load_single_caption_file(root_path)
+            yield _load_single_caption_file(root_path, keep_story_boundary=keep_story_boundary)
         else:
             # TODO: caption filwee
             yield _load_single_program_boundary_file(root_path)
@@ -102,13 +107,13 @@ def load_files(root_path, file_extension='txt3', recursive_search=False):
         filepaths = glob.iglob(root_path, recursive=recursive_search)
         if file_extension == 'txt3':        
             for path in filepaths:
-                yield _load_single_caption_file(path)
+                yield _load_single_caption_file(path, keep_story_boundary=keep_story_boundary)
         else:                
             for path in filepaths:
                 yield _load_single_program_boundary_file(path)
 
 
-def load_caption_files(root_path, recursive_search=False):
+def load_caption_files(root_path, recursive_search=True, keep_story_boundary=False):
     '''[summary]
     
     [description]
@@ -117,10 +122,10 @@ def load_caption_files(root_path, recursive_search=False):
         [description]
         [type]
     '''
-    return load_files(root_path, file_extension='txt3', recursive_search=True)
+    return load_files(root_path, file_extension='txt3', recursive_search=recursive_search, keep_story_boundary=keep_story_boundary)
 
 
-def load_program_boundary_files(root_path, recursive_search=False):
+def load_program_boundary_files(root_path, recursive_search=True):
     '''[summary]
     
     [description]
@@ -129,11 +134,19 @@ def load_program_boundary_files(root_path, recursive_search=False):
         [description]
         [type]
     '''
-    return load_files(root_path, file_extension='cuts', recursive_search=True)
+    return load_files(root_path, file_extension='cuts', recursive_search=recursive_search)
 
 
-def find_y_path_from_X_filename(X_filename, y_filetype, search_root_path):    
-    pattern = '{}/**/{}.{}'.format(search_root_path, X_filename, y_filetype)
+def _remove_story_boundary_annotation(caption):
+    is_story_boundary = caption['caption'].str.contains('type=', flags=re.IGNORECASE)
+    return caption[~is_story_boundary]
+
+
+def find_y_path_from_X_filename(X_filename, search_root_path):
+    if search_root_path.endswith('/'):
+        search_root_path = search_root_path[:-1]
+
+    pattern = '{}/**/{}.{}'.format(search_root_path, X_filename, 'cuts')
     paths = glob.glob(pattern, recursive=True)
     
     if len(paths) > 1:
@@ -144,8 +157,10 @@ def find_y_path_from_X_filename(X_filename, y_filetype, search_root_path):
 def split_video_to_clips(start_time, end_time, interval):
     pass
 
+
 def split_audio_to_clips(start_time, end_time, interval):
     pass
+
 
 def split_caption_to_X(caption, interval=10):
     '''[summary]

@@ -38,12 +38,8 @@ def accuracy_score_f1(model, X_path, y_path=None):
         X = split_caption_to_X(X)
 
         if y_path == None:
-            if X_path.endswith('/'):
-                y_path = X_path[:-1]
-            else:
-                y_path = X_path    
-
-        y_file_path = find_y_path_from_X_filename(metadata['filename'], 'cuts', y_path)
+            y_path = X_path
+        y_file_path = find_y_path_from_X_filename(metadata['filename'], y_path)
         p_boundaries, _ = next(load_program_boundary_files(y_file_path))
         y = convert_program_boundaries_to_y(p_boundaries, X)
 
