@@ -41,11 +41,12 @@ def _load_single_caption_file(path):
                         parse_dates=['start', 'end'],
                         date_parser=_caption_date_parser,
                         dtype={'start':str, 'end':str})
-
+    # cleanse column data here
+    df.drop(['marker', 'end'], axis=1, inplace=True)
     df = df.dropna()
     df = df.reset_index(drop=True)
-    df['mid'] = df['start'] + 0.5 * (df['end'] - df['start'])
-    metadata = annotate_file(path)
+    metadata = annotate_file(path)    
+    
     return (df, metadata)
 
 
@@ -55,15 +56,13 @@ def _load_single_cut_file(path):
     df = _load_csv_file(path, sep=r'\s+', names=col_names,
                        parse_dates={'cutpoint': ['recording_date', 'start']},
                        date_parser=_cut_date_parser)
+   
+    # cleanse column data here
+    cols_to_drop = ['vcr', 'vcr_2', 'recording_date_2',
+                   'end', 'schedule', 'program']
+    df.drop(cols_to_drop, axis=1, inplace=True)
     df.dropna()
-
-    #leave the first and the last timestamp as they tend to be noisy
-    #they may not be the trust program boundaries so it hinders the training.
-    #TODO: a counter argument is that they are roughly right, since we suffer from
-    #shortage of labelled boundaries so it may be more useful to keep them?
-    df = df[['cutpoint', 'vcr', 'program']][1:]
     df = df.reset_index(drop=True)
-
     metadata = annotate_file(path)
 
     return (df, metadata)
@@ -149,36 +148,27 @@ def split_audio_to_clips(start_time, end_time, interval):
     pass
 
 def split_caption_to_docs(X, interval=10):
-    '''[summary]
-    
-    [description]
-    
-    should handle both types of caption (original, speech-recognized)
-    
-    Args:
-        X: [description]
-        interval: [in seconds] (default: {10 seconds})
-    '''
     freq = '{}s'.format(interval)
     grouper = pd.Grouper(key='start',freq=freq)
     grouped = X.groupby(grouper)
-    # TODO: this function takes too much time!
     def _combine_rows(X):
-        # params = dict(start=X['start'].min(), 
-        #               end=X['end'].max(), 
-        #               caption=concat_caption)
+        # TODO: cleanse any unnecessary string in caption
         params = dict(caption=' '.join(X['caption'])) 
-        return pd.Series(params)
+        return pd.Series(params)    
     
-    return grouped.apply(_combine_rows)
+    X =  grouped.apply(_combine_rows)
+    X['start'] = X.index
+    X = X[['start', 'caption']]
+    return X.reset_index(drop=True)
+
 
 def convert_program_cuts_to_y(cuts, X, interval=10):    
-    y = pd.DataFrame(X.index, columns=['start'])
+    y = pd.DataFrame(X['start'], columns=['start'])
     y['is_program_boundary'] = False
         
     interval = np.timedelta64(10, 's')
     cuts = cuts['cutpoint'].values
-    # TODO: try a vectorized solution later on    
+    # TODO: try a vectorized solution later on  
     for cut_time in cuts:
         mask = ((y['start']) <= cut_time) & (cut_time < (y['start'] + interval))
         y['is_program_boundary'] = y['is_program_boundary'] | mask
