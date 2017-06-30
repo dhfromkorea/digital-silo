@@ -3,8 +3,6 @@ from src.utilities.data_utils import *
 
 
 def _evaluate_accuracy(y, pred):
-    pred = pred.reset_index(drop=True)
-    y = y['is_program_boundary']
     TP = (y & pred).sum() 
     TN = (~y & ~pred).sum()
     FP = (~y & pred).sum()
@@ -37,7 +35,7 @@ def accuracy_score_f1(model, X_path, y_path=None):
 
     for caption_file in caption_files:
         X, metadata = caption_file
-        X = split_caption_to_docs(X)
+        X = split_caption_to_X(X)
 
         if y_path == None:
             if X_path.endswith('/'):
@@ -45,9 +43,9 @@ def accuracy_score_f1(model, X_path, y_path=None):
             else:
                 y_path = X_path    
 
-        y_file_path = find_matching_filepath(metadata['filename'], 'cuts', y_path)
-        cuts, _ = next(load_program_cut_files(y_file_path))
-        y = convert_program_cuts_to_y(cuts, X)
+        y_file_path = find_y_path_from_X_filename(metadata['filename'], 'cuts', y_path)
+        p_boundaries, _ = next(load_program_boundary_files(y_file_path))
+        y = convert_program_boundaries_to_y(p_boundaries, X)
 
         #TODO: decision unit and this is not a true f1 score
         #decision unit (for classification) should be roughly the same as grace period?
@@ -65,8 +63,8 @@ def accuracy_score_f1(model, X_path, y_path=None):
     
     recall = total_TP / (total_TP + total_FN)
     precision = total_TP / (total_TP + total_FP)
-    print('total precision: {}, recall: {}'.format(precision, recall))
-
     f1_score = 2*(precision*recall)/(precision + recall)
+    msg = 'overall performance:\nprecision: {}\nrecall: {}\nf1: {}'
+    print(msg.format(precision, recall, f1_score))
     # return more detailed report like showing failure cases    
     return f1_score

@@ -6,11 +6,11 @@ python main.py
 
 terminologies
     shot ->(A) scene ->(B) story/commercial ->(C) program ->(D) video
-    below are cuts or boundaries, or transitions
-    A = shot cuts
-    B = scene cuts
-    C = story cuts (or commercial)
-    D = program cut
+    below are boundaries or boundaries, or transitions
+    A = shot boundaries
+    B = scene boundaries
+    C = story boundaries (or commercial)
+    D = program boundaries
 
 '''
 
@@ -27,7 +27,6 @@ def main():
     
     # test here
     f1_score= model.test('test_data/')
-    print(f1_score)
 
 if __name__ == "__main__":
     main()

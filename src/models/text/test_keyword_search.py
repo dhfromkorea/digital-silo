@@ -14,7 +14,7 @@ class TestKeywordSearchModel(unittest.TestCase):
         file_path = random.choice(file_paths)
 
         caption_data, metadata = next(load_caption_files(file_path))                        
-        self.X = split_caption_to_docs(caption_data)
+        self.X = split_caption_to_X(caption_data)
         self.X_metadata = metadata
 
         self.keywords = ['caption', 'story', 'commercial']

@@ -52,42 +52,42 @@ class TestDataUtilCaption(unittest.TestCase):
     def test_split_caption_file_to_documents(self):
         file_path = random.choice(self.file_paths)
         files = load_caption_files(file_path)                
-        X, metadata = next(files)
-        docs = split_caption_to_docs(X, interval=10)
-        num_docs_A = docs.shape[0]
+        caption, metadata = next(files)
+        X = split_caption_to_X(caption, interval=10)
+        num_X_A = X.shape[0]
         #manually calculate the group size
-        start_time = X.head(1).iloc[0]['start']
+        start_time = X.head(1).iloc[0]['t_start']
         # using 'start' is probably fine
-        end_time = X.tail(1).iloc[0]['start']
+        end_time = X.tail(1).iloc[0]['t_start']
         video_duration = end_time - start_time
         doc_size = np.timedelta64(10, 's')
-        num_docs = math.ceil(video_duration / doc_size)
+        num_X = math.ceil(video_duration / doc_size)
         
         # off by one error does not matter
-        self.assertTrue((num_docs_A == num_docs) or ((num_docs_A-1) == num_docs), 'a caption file should be split to a list of documents.')     
+        self.assertTrue((num_X_A == num_X) or ((num_X_A-1) == num_X), 'a caption file should be split to a list of documents.')     
 
 
-class TestDataUtilProgramCut(unittest.TestCase):
+class TestDataUtilProgramBoundary(unittest.TestCase):
     def setUp(self):
         self.root_path = TEST_DATA_PATH
-        search_path_y = self.root_path + '*.cuts'
+        search_path_y = self.root_path + '*.boundaries'
         self.file_paths_y = [p for p in glob.iglob(search_path_y)]
         search_path_X = self.root_path + '*.txt3'
         self.file_paths_X = [p for p in glob.iglob(search_path_X)]
 
 
-    def test_load_single_cut_file(self):    
+    def test_load_single_program_boundary_file(self):    
         file_path = random.choice(self.file_paths_y)
-        files = load_program_cut_files(file_path)                
+        files = load_program_boundary_files(file_path)                
         y, _ = next(files)
 
         self.assertEqual(len(y.columns), 3, 'should have 3 columns')
-        self.assertIsInstance(y.loc[0]['cutpoint'], pd.Timestamp, 'should have marker column starting with SEG')
+        self.assertIsInstance(y.loc[0]['t_program_boundary'], pd.Timestamp, 'should have marker column starting with SEG')
 
 
-    def test_extract_metadata_cut_file(self):
+    def test_extract_metadata_program_boundary_file(self):
         file_path = random.choice(self.file_paths_y)
-        files = load_program_cut_files(file_path)
+        files = load_program_boundary_files(file_path)
         _, metadata = next(files)
 
         filename = os.path.basename(file_path)
@@ -95,30 +95,30 @@ class TestDataUtilProgramCut(unittest.TestCase):
         self.assertEqual(filename, filename_from_metadata, 'the filename that we loaded data from must match the filename extracted in the metadata.')
 
 
-    def test_load_multiple_cut_files(self):
-        files = load_program_cut_files(self.root_path, recursive_search=True)
+    def test_load_multiple_program_boundary_files(self):
+        files = load_program_boundary_files(self.root_path, recursive_search=True)
 
         num_files = 0
         for f in files:
             y, metadata = f
             num_files += 1
             self.assertEqual(len(y.columns), 3, 'should have 3 columns')
-            self.assertIsInstance(y.loc[0]['cutpoint'], pd.Timestamp, 'should have marker column starting with SEG')                    
+            self.assertIsInstance(y.loc[0]['t_program_boundary'], pd.Timestamp, 'should have marker column starting with SEG')                    
         self.assertTrue(num_files > 1, 'it should load more than one cut file.')
 
 
-    def test_convert_program_cuts_to_y(self):
+    def test_convert_program_boundaries_to_y(self):
         file_path = random.choice(self.file_paths_X)
         files = load_caption_files(file_path)                
-        X, metadata = next(files)
-        docs = split_caption_to_docs(X, interval=10)
+        caption, metadata = next(files)
+        X = split_caption_to_X(caption, interval=10)
 
         file_path = random.choice(self.file_paths_y)
-        files = load_program_cut_files(file_path)                
-        cuts, _ = next(files)
+        files = load_program_boundary_files(file_path)                
+        p_boundaries, _ = next(files)
 
-        y = convert_program_cuts_to_y(cuts, docs)
-        self.assertEqual(len(y), len(docs), 'the lengths of docs and y should be the same.')
+        y = convert_program_boundaries_to_y(p_boundaries, X)
+        self.assertEqual(len(y), len(X), 'the lengths of X and y should be the same.')
         
 if __name__ == '__main__':
     unittest.main()

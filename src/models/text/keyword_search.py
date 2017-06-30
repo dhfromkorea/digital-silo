@@ -21,8 +21,8 @@ class KeywordSearch(object):
     def keywords(self, keywords=[]):
         self._keywords = keywords
 
-    def test(self, root_path_captions, root_path_cuts=None):
-        return accuracy_score_f1(self, root_path_captions, root_path_cuts)
+    def test(self, path_X, path_y=None):
+        return accuracy_score_f1(self, path_X, path_y)
 
     def predict(self, X):
         '''[summary]
