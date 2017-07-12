@@ -6,7 +6,7 @@ from src.models.text.keyword_search import *
 from src.utilities.data_utils import *
 
 
-class TestKeywordSearchModel(unittest.TestCase):
+class TestKeywordSearch(unittest.TestCase):
     
     def setUp(self):
         search_path = 'test_data/' + '*.txt3'
