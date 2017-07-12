@@ -33,8 +33,10 @@ def _load_csv_file(path, sep, names, parse_dates, date_parser, dtype=None):
                          dtype=dtype)
         return df
     except Exception as e:
+        # file may not exist
+        # file may exist but may be empty
         print(e)
-        pass
+        return pd.DataFrame()
 
 
 def _load_single_caption_file(path, keep_story_boundary=False):        
@@ -43,15 +45,18 @@ def _load_single_caption_file(path, keep_story_boundary=False):
                         parse_dates=['t_start', 't_end'],
                         date_parser=_caption_date_parser,
                         dtype={'t_start':str, 't_end':str})
-    # cleanse column data here
-    df.drop(['marker', 't_end'], axis=1, inplace=True)
-    df = df.dropna()
-    df = df.reset_index(drop=True)
-    # story boundaries removed as ASR-generated caption files won't have these
-    if not keep_story_boundary:
-        df = _remove_story_boundary_annotation(df)
-    metadata = annotate_file(path)    
     
+    metadata = annotate_file(path)        
+
+    
+    if not df.empty:
+        # cleanse column data here
+        df.drop(['marker', 't_end'], axis=1, inplace=True)
+        df = df.dropna()
+        df = df.reset_index(drop=True)
+        if not keep_story_boundary and not df['caption'].empty:
+            df = _remove_story_boundary_annotation(df)
+        # story boundaries removed as ASR-generated caption files won't have these
     return (df, metadata)
 
 
@@ -75,18 +80,24 @@ def _load_single_program_boundary_file(path):
 def annotate_file(path):
     base = os.path.basename(path)
     filename, ext = os.path.splitext(base)
-    filename_components = filename.split('_')
-    if len(filename_components) == 9:            
+    filename_components = re.split('_|-', filename)
+    # filename_components = filename.split('_')
+    if len(filename_components) == 11:            
         metadata = {
                        'filename': filename,
                        'filetype': ext,
-                       'recording_end_date': filename_components[0],
-                       'vcr_index': filename_components[4]
+                       'recording_end_date': '_'.join(filename_components[0:3]),
+                       'vcr_index': filename_components[6]
                     }
     else:
         print('corrupted filename: {}'.format(filename))
         # corrupted file name
-        metadata = None
+        metadata = {
+                       'filename': filename,
+                       'filetype': ext,
+                       'recording_end_date': '',
+                       'vcr_index': ''
+                    }
     return metadata
 
 def load_files(root_path, file_extension='txt3', recursive_search=True, keep_story_boundary=False):
@@ -137,7 +148,7 @@ def load_program_boundary_files(root_path, recursive_search=True):
     return load_files(root_path, file_extension='cuts', recursive_search=recursive_search)
 
 
-def _remove_story_boundary_annotation(caption):
+def _remove_story_boundary_annotation(caption):    
     is_story_boundary = caption['caption'].str.contains('type=', flags=re.IGNORECASE)
     return caption[~is_story_boundary]
 

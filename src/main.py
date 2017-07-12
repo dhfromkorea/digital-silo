@@ -22,19 +22,20 @@ from src.models.text import keyword_search as ks
 from src.utilities.data_utils import *
 
 import datetime
-TEST_DATA_PATH = 'test_data/'
+#TEST_DATA_PATH = 'test_data/'
+TEST_DATA_PATH = '../tmp/'
 
 
 def try_keyword_search():
     # train here
-    keywords = ['caption', 'story', 'commercial']
+    keywords = ['Type=Commercial','Type=Story']
     model = ks.KeywordSearch(keywords)
     # validate to tune hyperparams here
     
     # test here
     f1_score= model.test(TEST_DATA_PATH)
 
-def main():
+def check_story_boundaries():
     search_path = TEST_DATA_PATH +'.txt3'
     X_paths = glob.glob(search_path)
     file_path = random.choice(X_paths)
@@ -62,5 +63,10 @@ def main():
         print(md)
     print(metadata['filename'])
     print(sum(min_deltas, datetime.timedelta())/len(min_deltas))
+
+def main():
+    try_keyword_search()
+    #check_story_boundaries()
+
 if __name__ == "__main__":
     main()
