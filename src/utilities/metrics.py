@@ -33,12 +33,12 @@ def accuracy_score_f1(model, X_path, y_path=None):
     total_FN = 0
     num_caption_files = 0
     for caption_file in caption_files:
-        X, metadata = caption_file
-        if X.empty:
-            print("an empty caption file: {}".format(X))
+        caption, metadata = caption_file
+        if caption.empty:
+            print("an empty caption file: {}".format(caption))
             continue
 
-        X = split_caption_to_X(X)
+        X = split_caption_to_X(caption)
         print('processing', metadata['filename'])
         if y_path == None:
             y_path = X_path

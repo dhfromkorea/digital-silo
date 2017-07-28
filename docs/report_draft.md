@@ -88,6 +88,10 @@ One challenge is to choose the number of topics in advance, which is a hyper par
 
 It seems LDA is going out of fashion and may consider other state-of-the-art methods instead. https://datascience.stackexchange.com/questions/678/what-are-some-standard-ways-of-computing-the-distance-between-documents
 
+visualization: http://vis.stanford.edu/papers/termite
+data: http://scikit-learn.org/stable/datasets/twenty_newsgroups.html#newsgroups
+tutorial: https://medium.com/@aneesha/topic-modeling-with-scikit-learn-e80d33668730
+
 ###Transition Markers
 There seem to be a few keywords that appear recurringly in the caption files and they seem to be correlated with program boundaries.
 		
