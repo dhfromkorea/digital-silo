@@ -6,7 +6,7 @@ import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from sklearn.decomposition import NMF, LatentDirichletAllocation
 
-from src.models.text.lda import *
+# from src.models.text.lda import *
 from src.utilities.data_utils import *
 
 
