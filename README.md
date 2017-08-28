@@ -1,8 +1,5 @@
 # SiloBreaker
 
-[![Master Build Status](https://travis-ci.org/dhfromkorea/digital-silo.svg?branch=master)](https://travis-ci.org/dhfromkorea/digital-silo)
-[![Dev Build Status](https://travis-ci.org/dhfromkorea/digital-silo.svg?branch=dev)](https://travis-ci.org/dhfromkorea/digital-silo)
-
 ## Getting started
 ### Dependencies
 The easiest way to get the dependencies is to use Anaconda.
@@ -12,6 +9,7 @@ conda env create -f environment.yml
 ```
 
 If you prefer using virtualenv or other forms, you may want to install the following.
+* dejavu
 * python=3.6.1
 * numpy=1.13.0
 * pandas=0.20.2
@@ -40,9 +38,14 @@ The available models (to be added) are:
 
 
 ### Testing
-A new module will be preceded by a test module (TDD). Travis handles continuous integration whose build status is showing at the top section of this document.
 
 ```bash
 cd src/
 pytest
+```
+or to test a specific module
+
+```bash
+cd src/
+pytest path_to_the_test_module
 ```

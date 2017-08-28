@@ -1,0 +1,1 @@
+for i in ../../../tmp/example/*.mp4; do avconv -n -i "$i" -vn "$i.mp3"; done

@@ -213,3 +213,7 @@ def convert_program_boundaries_to_y(program_boundaries, X, interval=10):
         y['is_program_boundary'] = y['is_program_boundary'] | mask
     
     return y['is_program_boundary']  
+
+
+def convert_timestamp_to_secs(timestamp):
+    pass

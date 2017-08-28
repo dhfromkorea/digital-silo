@@ -35,10 +35,10 @@ class TestLda(unittest.TestCase):
                 print("Topic {}".format(topic_idx))
                 print(" ".join([feature_names[i] for i in topic.argsort()[:-no_top_words - 1:-1]]))
 
-        import pdb;pdb.set_trace()
         no_top_words = 10
         display_topics(lda, tf_feature_names, no_top_words)         
-# checkout https://stackoverflow.com/questions/31107945/how-to-perform-prediction-with-lda-linear-discriminant-in-scikit-learn
+        # checkout https://stackoverflow.com/questions/31107945/how-to-perform-prediction-with-lda-linear-discriminant-in-scikit-learn
+    
     def test_predict_lda(self):
         pass
     
