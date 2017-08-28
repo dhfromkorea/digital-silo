@@ -23,7 +23,7 @@ from src.utilities.data_utils import *
 
 import datetime
 #TEST_DATA_PATH = 'test_data/'
-TEST_DATA_PATH = '../tmp/2006/2006-06/'
+TEST_DATA_PATH = '../data/2006/2006-06/'
 
 
 def try_keyword_search():

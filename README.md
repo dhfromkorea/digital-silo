@@ -1,5 +1,5 @@
 # SiloBreaker
-GSoC 2017 project for [Red Hen Labs](http://www.redhenlab.org/). Details about the project can be found [here](https://github.com/dhfromkorea/digital-silo/blob/master/docs/project_overview.pdf) 
+GSoC 2017 project for [Red Hen Labs](http://www.redhenlab.org/). Details about the project can be found [here](https://github.com/dhfromkorea/digital-silo/blob/master/docs/project_overview.pdf). 
 
 ## The problem
 The project has a large archive of TV news videos recorded since 70's. Each video is roughly 8-hour-long. We want to split each video by their natural boundaries where a program changes to another (typically with a commercial in between).
@@ -33,12 +33,18 @@ For full acccess to the data, you will need to make a request for access to the 
 
 
 ### How to use
-Your playground for loading different models and evaluate them against test data is src/main.py. Run main.py at src/.
+Each model/module has a corresponding test module where you can look and get a sense of how the module is supposed to be used. Your playground for loading different models and evaluate them against test data is src/main.py. Run main.py at ```src/```. 
 
 The available models (to be added) are:
 * text: KeywordSearch
 * audio: AudioFingerprint
 * video: VisualStock
+* datautils: utilities to preprocessing video, audio, text, cut files
+
+
+### Performance
+
+The problem can be approached either in supervised or unsupervised learning. Currently the problem is structured as a binary classification problem on a series of time segments (default to 10 seconds). Since we have labelled samples (cutfiles), if incomplete, we can train on and cross-validate against them. Just note that the cutfiles are not so useful (noisy) and many in existence.  
 
 ```python
 keywords = ['caption', 'story', 'commercial']
@@ -47,23 +53,13 @@ f1_score= model.test('test_data/')
 print(f1_score)
 ```
 
-### Testing
+As of now, the f1 score does not give you an accurate picture of how well your model is performing, because labelled data (cutfiles) are incomplete and inconsistent.
 
+### Testing
 ```bash
 cd src/
 pytest
 ```
-or to test a specific module
 
-```bash
-cd src/
-pytest path_to_the_test_module
-```
-
-### Todos
-* data collection
-* feature extraction
-
-### Issues
-cleanup
-
+### Todos & issues
+[link](https://github.com/dhfromkorea/digital-silo/issues)
