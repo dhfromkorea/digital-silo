@@ -43,17 +43,16 @@ The available models (to be added) are:
 
 
 ### Performance
-
-The problem can be approached either in supervised or unsupervised learning. Currently the problem is structured as a binary classification problem on a series of time segments (default to 10 seconds). Since we have labelled samples (cutfiles), if incomplete, we can train on and cross-validate against them. Just note that the cutfiles are not so useful (noisy) and many in existence.  
+The problem can be approached either in supervised or unsupervised learning. Currently the problem is structured as a binary classification problem on a series of time segments (default to 10 seconds). Since we have labelled samples (cutfiles), if incomplete, we can train on and cross-validate against them. Just note that the cutfiles are not so useful (noisy) and many in existence. 
 
 ```python
-keywords = ['caption', 'story', 'commercial']
+keywords = ['caption', 'type=story', 'type=commercial'] 
 model = ks.KeywordSearch(keywords)
 f1_score= model.test('test_data/')
 print(f1_score)
 ```
 
-As of now, the f1 score does not give you an accurate picture of how well your model is performing, because labelled data (cutfiles) are incomplete and inconsistent.
+As of now, the f1 score does not give you an accurate picture of how well your model is performing, because labelled data (cutfiles) are incomplete and inconsistent.  The hypothesis to test is that program boundaries are a subset of the story boundaries. I tested this hypothesis with the keytwords 'type=story/commercial' and achieved 93% recall with a 3 minute padding (see predict() method for KeywordSearch). The remaining 7% is I believe due to the incompleteness of caption files (see the issues page).
 
 ### Testing
 ```bash

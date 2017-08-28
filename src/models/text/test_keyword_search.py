@@ -26,6 +26,7 @@ class TestKeywordSearch(unittest.TestCase):
         is_matched = self.model.predict(self.X)
         matched_lines = self.X[is_matched]
         line = matched_lines['caption'].iloc[0].lower()
+        import pdb;pdb.set_trace()
         self.assertTrue(self.keywords[0] in line,'keyword-matching lines must contain the searched-for keyword')
 
 
