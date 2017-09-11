@@ -48,7 +48,7 @@ def accuracy_score_f1(model, X_path, y_path=None):
 
         #TODO: decision unit and this is not a true f1 score
         #decision unit (for classification) should be roughly the same as grace period?
-        pred = model.predict(X)
+        pred = model.predict(X, padding=True)
         
 
         (TP, TN, FP, FN) = _evaluate_accuracy(y, pred)

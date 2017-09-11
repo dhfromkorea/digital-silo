@@ -18,6 +18,10 @@ class TestFingerPrint(unittest.TestCase):
         self.filepath = TEST_PATH 
 
     # def test_slice_audio_segment(self):
+    #     TODO: currently the video files are too big
+    #     it's causing memory problems
+    #     see: https://github.com/jiaaro/pydub/issues/135
+       
     #     pb = 20000 # program boundary timestamp in secs
     #     pad = 10 # secs
     #     self.fp.slice_audio_segment(self.filepath, pb - pad, pb + pad, "mp4")
@@ -28,6 +32,7 @@ class TestFingerPrint(unittest.TestCase):
     #     self.fp.extract_fingerprint_single(TEST_SEG_PATH)
     #     # song once extracted must be recognized
     #     song = self.fp.recognize_audio(TEST_SEG_PATH)
+    #     print('song', song)
     #     self.assertTrue(song['confidence'] > 5000, "fingerprint for a song the model has already seen must be recognized with high confidence.")
 
 

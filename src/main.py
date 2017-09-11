@@ -22,13 +22,13 @@ from src.models.text import keyword_search as ks
 from src.utilities.data_utils import *
 
 import datetime
-#TEST_DATA_PATH = 'test_data/'
-TEST_DATA_PATH = '../data/2006/2006-06/'
+TEST_DATA_PATH = '../tmp/'
+# TEST_DATA_PATH = '../data/2006/2006-06/'
 
 
 def try_keyword_search():
     # train here
-    keywords = ['Type=Commercial','Type=Story']
+    keywords = ['caption', 'Type=Commercial','Type=Story']
     model = ks.KeywordSearch(keywords)
     # validate to tune hyperparams here
     
