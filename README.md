@@ -1,5 +1,5 @@
 # SiloBreaker
-GSoC 2017 project for [Red Hen Labs](http://www.redhenlab.org/). Details about the project can be found [here](https://github.com/dhfromkorea/digital-silo/blob/master/docs/project_overview.pdf). 
+GSoC 2017 project for [Red Hen Labs](http://www.redhenlab.org/). The latest status report can be found [here](https://medium.com/@dhfromkorea/gsoc-phase-3-update-14e710ee3aa1)
 
 ## The problem
 The project has a large archive of TV news videos recorded since 70's. Each video is roughly 8-hour-long. We want to split each video by their natural boundaries where a program changes to another (typically with a commercial in between).
